@@ -52,6 +52,7 @@ void philosopher(int i) {
 void think(int i) {
 	/*Filosofo esta pensando...*/
 	//sleep(1);
+   	printf("\tFilosofo#%d esta COMENDO\n",i);
 	return;
 }
 
@@ -70,22 +71,28 @@ void take_forks(int i) {
 void eat(int i) {
 	/*Filosofo esta comendo...*/
 	//sleep(1);
+   	printf("\tFilosofo#%d esta PENSANDO\n",i);
+
 	return;
 }
 
 void put_forks(int i) {
 	sem_wait(&mutex); //down(&mutex); /* entra na regiao critica */
     	state[i] = THINKING;/* o filosofo acabou de comer */
-	printf("Filosofo#%d esta PENSANDO\n",i);
+	printf("Filosofo#%d agora vai PENSAR\n",i);
+	printf("Filosofo#%d verificando se Filosofo#%d pode comer\n",i,LEFT);
 	test(LEFT);  /* verifica se o vizinho da esquerda pode comer agora */
+	printf("Filosofo#%d verificando se Filosofo#%d pode comer\n",i,RIGHT);
 	test(RIGHT); /* verifica se o vizinho da direita pode comer agora */
 	sem_post(&mutex);//up(&mutex);  /* sai da regiao cri­tica */
 }
 
 void test(int i) {  //testa se os filosofos vizinhos podem comer
-
-//?????
-
+     if (state[i]==HUNGRY && state[LEFT]!=EATING && state[RIGHT]!=EATING){
+   	state[i] = EATING;
+   	printf("Filosofo#%d esta COMENDO (%d e %d nao podem comer)\n",i,LEFT,RIGHT);
+   	sem_post(&s[i]);//up(&s[i]);
+     }
 }
 
 
